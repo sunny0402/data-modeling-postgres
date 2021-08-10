@@ -7,6 +7,16 @@ from sql_queries import *
 
 
 def process_song_file(cur, filepath):
+    """
+    Description: Read json files and populate songs and artists tables.
+
+    Args:
+        cur: the cursor object
+        filepath: song data file path
+
+    Returns:
+        None
+    """
     # open song file
     df = pd.read_json(filepath, lines=True)
 
@@ -23,6 +33,15 @@ def process_song_file(cur, filepath):
 
 
 def process_log_file(cur, filepath):
+    """Description: Process json log files to populate time, users and songplays tables.
+
+    Args:
+        cur: the cursor object
+        filepath: log data file path
+
+    Returns:
+        None
+    """
     # open log file
     df = pd.read_json(filepath, lines=True)
 
@@ -60,8 +79,8 @@ def process_log_file(cur, filepath):
         cur.execute(user_table_insert, row)
 
     # insert songplay records
+    songplay_data = []
     for index, row in df.iterrows():
-
         # get songid and artistid from song and artist tables
         cur.execute(song_select, (row.song, row.artist, row.length))
         results = cur.fetchone()
@@ -70,27 +89,27 @@ def process_log_file(cur, filepath):
             songid, artistid = results
         else:
             songid, artistid = None, None
-
         # insert songplay record
-        songplay_data = []
-        for index, row in df.iterrows():
-            # get songid and artistid from song and artist tables
-            cur.execute(song_select, (row.song, row.artist, row.length))
-            results = cur.fetchone()
+        songplay_data = [row.ts, row.userId, row.level, songid, artistid,
+                         row.sessionId, row.location, row.userAgent]
 
-            if results:
-                songid, artistid = results
-            else:
-                songid, artistid = None, None
-            # insert songplay record
-            songplay_data = [row.ts, row.userId, row.level, songid, artistid,
-                             row.sessionId, row.location, row.userAgent]
-
-            cur.execute(songplay_table_insert, songplay_data)
-            # conn.commit()
+        cur.execute(songplay_table_insert, songplay_data)
+        # conn.commit()
 
 
 def process_data(cur, conn, filepath, func):
+    """Description: Ingest files in filepath directory according to ingest func.
+
+    Args:
+        cur: cursor object
+        conn: database connection
+        filepath: log or song data file path
+        func: function that transforms the data and inserts it into the database.
+
+    Returns:
+        None
+
+    """
     # get all files matching extension from directory
     all_files = []
     for root, dirs, files in os.walk(filepath):
@@ -110,12 +129,12 @@ def process_data(cur, conn, filepath, func):
 
 
 def main():
-    conn = psycopg2.connect(
-        "host=127.0.0.1 dbname=sparkifydb user=student password=student")
-
-    # for local
     # conn = psycopg2.connect(
-    #     "host=127.0.0.1 port=5434 dbname=sparkifydb user=postgres password=7890")
+    #     "host=127.0.0.1 dbname=sparkifydb user=student password=student")
+
+    # for local database connection
+    conn = psycopg2.connect(
+        "host=127.0.0.1 port=5434 dbname=sparkifydb user=postgres password=7890")
 
     cur = conn.cursor()
 
