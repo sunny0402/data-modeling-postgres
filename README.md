@@ -1,8 +1,9 @@
 ## Introduction
 
-    The purpose of this project is to create a star schema optimized for queries on song play analysis
+    The purpose of this project is help a startup, Sparkify!
+    They need to analyze the data collected on songs and user activity via their music streaming app.
 
-what is Sparkify, how the ETL is going to work.
+    The result will be  an ETL pipeline and Postgres database optimized for queries on song play analysis.
 
 ## Database Schema
 

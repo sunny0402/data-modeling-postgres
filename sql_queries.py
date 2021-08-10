@@ -10,8 +10,8 @@ time_table_drop = "DROP TABLE IF EXISTS time"
 
 # Fact table
 songplay_table_create = """
-            CREATE TABLE IF NOT EXISTS 
-            songplays  (songplay_id BIGSERIAL PRIMARY KEY,
+            CREATE TABLE IF NOT EXISTS songplays
+            (songplay_id BIGSERIAL PRIMARY KEY,
             start_time  BIGINT NOT NULL, 
             user_id INTEGER NOT NULL,
             level varchar, song_id varchar, 
@@ -45,8 +45,10 @@ song_table_create = """
 artist_table_create = """
                     CREATE TABLE IF NOT EXISTS artists
                     (artist_id varchar PRIMARY KEY,
-                    name varchar, location varchar,
-                    latitude numeric, longitude numeric);
+                    name varchar, 
+                    location varchar,
+                    latitude numeric, 
+                    longitude numeric);
                     """
 
 time_table_create = """
